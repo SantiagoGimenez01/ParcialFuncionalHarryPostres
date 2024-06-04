@@ -4,6 +4,7 @@ import PdePreludat
 doble :: Number -> Number
 doble numero = numero + numero
 
+--PARTE 1
 data Postre = UnPostre{
     sabores :: [Sabor],
     peso :: Number,
@@ -76,4 +77,60 @@ cantidadPostresListos = length . filtrarPostresListos
 
 pesosPostres :: [Postre] -> [Number]
 pesosPostres = map peso 
- 
+
+--PARTE 2
+data Mago = UnMago{
+    hechizosAprendidos :: [Hechizo],
+    cantidadHorrocruxes :: Number
+}deriving(Show, Eq)
+
+harry :: Mago
+harry = UnMago{hechizosAprendidos=[incendio, immobulus, levantarYDejarCaer], cantidadHorrocruxes = 0}
+
+asistirAClases :: Mago -> Hechizo -> Postre -> Mago
+asistirAClases mago hechizo postre
+    | hechizo postre == avadaKedabra postre = (sumarHorrocrux . practicarConHechizo hechizo) mago
+    | otherwise = practicarConHechizo hechizo mago
+
+practicarConHechizo :: Hechizo -> Mago -> Mago
+practicarConHechizo hechizo mago = mago{hechizosAprendidos = hechizo:hechizosAprendidos mago}
+
+mismoResultadoQueAvKe :: Hechizo -> Postre -> Bool
+mismoResultadoQueAvKe hechizo postre = hechizo postre == avadaKedabra postre
+
+sumarHorrocrux :: Mago -> Mago
+sumarHorrocrux mago = mago{cantidadHorrocruxes = cantidadHorrocruxes mago + 1}
+
+mejorHechizo :: Postre -> Mago -> Hechizo
+mejorHechizo postre mago = foldr1 (cualHechizoEsMejor postre) (hechizosAprendidos mago)
+
+cualHechizoEsMejor :: Postre -> Hechizo -> Hechizo -> Hechizo
+cualHechizoEsMejor postre hechizo1 hechizo2
+    | cantidadDeSaboresPostHechizo postre hechizo1 > cantidadDeSaboresPostHechizo postre hechizo2 = hechizo1
+    | otherwise = hechizo2
+
+cantidadDeSaboresPostHechizo :: Postre -> Hechizo -> Number
+cantidadDeSaboresPostHechizo postre hechizo = (length . sabores . hechizo) postre
+
+--Parte 3
+
+postresInfinitos :: [Postre] -> [Postre]
+postresInfinitos = cycle
+
+ron :: Mago
+ron = UnMago{hechizosAprendidos = cycle [incendio, wingardiumLeviosa, immobulus], cantidadHorrocruxes = 2}
+
+{-
+    b) Si existe una consulta y es: MesaDePostresListos postresInfinitos avadaKedabra
+    Esto retorna false ya que al encontrar un postre que no esta listo la funcion devuelve el resultado (false), esto lo hace
+    debido a que haskell trabaja con evaluacion diferida y cuando tiene que controlar que TODOS los postres esten listos
+    basta con encontrar uno solo que no lo este para que ahi termine el control y devuelva que al menos uno no lo esta por lo que
+    es FALSO que todos estan listos.
+
+    c)No existe tal caso ya que para poder encontrar el mejor hechizo haskell necesitaria evaluar cada uno de los hechizos y 
+    compararlos de modo que nunca terminaria el control debido a que la lista de hechizos es infinita. En este caso a diferencia
+    del anterior si requiere que pase por cada hechizo ya que no basta con comparar hasta cierto punto ya que debido a la 
+    infinitud de la lista siempre puede llegar a haber un hechizo mejor y por lo tanto siempre seguiria buscando y comparando
+    con los infinitos hechizos que se encuentran en la lista.
+
+-}
