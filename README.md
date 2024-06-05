@@ -1,62 +1,24 @@
-Aprenda a jugar golf con Lee Carvallo
-Lisa Simpson se propuso desarrollar un programa que le permita ayudar a su hermano a vencer a su vecino Todd en un torneo de minigolf. Para hacerlo más interesante, los padres de los niños hicieron una apuesta: el padre del niño que no gane deberá cortar el césped del otro usando un vestido de su esposa.
-
-De los participantes nos interesará el nombre del jugador, el de su padre y sus habilidades (fuerza y precisión). 
-
-
--- Modelo inicial
-data Jugador = UnJugador {
-  nombre :: String,
-  padre :: String,
-  habilidad :: Habilidad
-} deriving (Eq, Show)
-
-data Habilidad = Habilidad {
-  fuerzaJugador :: Int,
-  precisionJugador :: Int
-} deriving (Eq, Show)
-
--- Jugadores de ejemplo
-bart = UnJugador "Bart" "Homero" (Habilidad 25 60)
-todd = UnJugador "Todd" "Ned" (Habilidad 15 80)
-rafa = UnJugador "Rafa" "Gorgory" (Habilidad 10 1)
-
-data Tiro = UnTiro {
-  velocidad :: Int,
-  precision :: Int,
-  altura :: Int
-} deriving (Eq, Show)
-
-type Puntos = Int
-
--- Funciones útiles
-between n m x = elem x [n .. m]
-
-maximoSegun f = foldl1 (mayorSegun f)
-mayorSegun f a b
-  | f a > f b = a
-  | otherwise = b
-
-También necesitaremos modelar los palos de golf que pueden usarse y los obstáculos que deben enfrentar para ganar el juego.
-
-Sabemos que cada palo genera un efecto diferente, por lo tanto elegir el palo correcto puede ser la diferencia entre ganar o perder el torneo.
-Modelar los palos usados en el juego que a partir de una determinada habilidad generan un tiro que se compone por velocidad, precisión y altura.
-El putter genera un tiro con velocidad igual a 10, el doble de la precisión recibida y altura 0.
-La madera genera uno de velocidad igual a 100, altura igual a 5 y la mitad de la precisión.
-Los hierros, que varían del 1 al 10 (número al que denominaremos n), generan un tiro de velocidad igual a la fuerza multiplicada por n, la precisión dividida por n y una altura de n-3 (con mínimo 0). Modelarlos de la forma más genérica posible.
-Definir una constante palos que sea una lista con todos los palos que se pueden usar en el juego.
-Definir la función golpe que dados una persona y un palo, obtiene el tiro resultante de usar ese palo con las habilidades de la persona.
-Por ejemplo si Bart usa un putter, se genera un tiro de velocidad = 10, precisión = 120 y altura = 0.
-Lo que nos interesa de los distintos obstáculos es si un tiro puede superarlo, y en el caso de poder superarlo, cómo se ve afectado dicho tiro por el obstáculo. En principio necesitamos representar los siguientes obstáculos:
-Un túnel con rampita sólo es superado si la precisión es mayor a 90 yendo al ras del suelo, independientemente de la velocidad del tiro. Al salir del túnel la velocidad del tiro se duplica, la precisión pasa a ser 100 y la altura 0.
-Una laguna es superada si la velocidad del tiro es mayor a 80 y tiene una altura de entre 1 y 5 metros. Luego de superar una laguna el tiro llega con la misma velocidad y precisión, pero una altura equivalente a la altura original dividida por el largo de la laguna.
-Un hoyo se supera si la velocidad del tiro está entre 5 y 20 m/s yendo al ras del suelo con una precisión mayor a 95. Al superar el hoyo, el tiro se detiene, quedando con todos sus componentes en 0.
-Se desea saber cómo queda un tiro luego de intentar superar un obstáculo, teniendo en cuenta que en caso de no superarlo, se detiene, quedando con todos sus componentes en 0.
-
-
-Definir palosUtiles que dada una persona y un obstáculo, permita determinar qué palos le sirven para superarlo.
-Saber, a partir de un conjunto de obstáculos y un tiro, cuántos obstáculos consecutivos se pueden superar.
-Por ejemplo, para un tiro de velocidad = 10, precisión = 95 y altura = 0, y una lista con dos túneles con rampita seguidos de un hoyo, el resultado sería 2 ya que la velocidad al salir del segundo túnel es de 40, por ende no supera el hoyo.
-BONUS: resolver este problema sin recursividad, teniendo en cuenta que existe una función takeWhile :: (a -> Bool) -> [a] -> [a] que podría ser de utilidad.
-Definir paloMasUtil que recibe una persona y una lista de obstáculos y determina cuál es el palo que le permite superar más obstáculos con un solo tiro.
-Dada una lista de tipo [(Jugador, Puntos)] que tiene la información de cuántos puntos ganó cada niño al finalizar el torneo, se pide retornar la lista de padres que pierden la apuesta por ser el “padre del niño que no ganó”. Se dice que un niño ganó el torneo si tiene más puntos que los otros niños.
+El reconocido mago de la cicatriz, viendo que su trabajo como Auror se tornó francamente aburrido luego de derrotar a Riddle, decidió poner un local de comidas especializado en preparaciones dulces.
+Postres
+En el universo local de Harry Postre, para hacer postres se utilizan hechizos que se van usando sobre los mismos para irlos preparando.
+Modelar los postres. Un mismo postre puede tener muchos sabores, tiene un peso y se sirve a cierta temperatura.
+Por ejemplo, un bizcocho borracho de fruta y crema de 100 gramos servido a 25°C.
+Modelar los hechizos, sabiendo que deberían poderse agregar más sin modificar el código existente. Por ahora existen los siguientes:
+Incendio: calienta el postre 1 grado y lo hace perder 5% de su peso.
+Immobulus: congela el postre, llevando su temperatura a 0.
+Wingardium Leviosa: levanta el postre en el aire y lo deja caer, lo que agrega a sus sabores el sabor “concentrado”. Además, pierde 10% de su peso.
+Diffindo: Corta el postre, disminuyendo su peso en el porcentaje indicado. 
+Riddikulus: Requiere como información adicional un sabor y lo agrega a los sabores que tiene un postre, pero invertido.
+Avada kedavra: Hace lo mismo que el immobulus pero además hace que el postre pierda todos sus sabores.
+Dado un conjunto de postres en la mesa, saber si hacerles un determinado hechizo los dejará listos (un postre está listo cuando pesa algo más que cero, tiene algún sabor y además no está congelado).
+Por ejemplo, si en la mesa está el bizcocho mencionado anteriormente y una tarta de melaza de 0 grados y 50 gramos, y les hago el hechizo incendio, quedan listos, pero si les hago el hechizo riddikulus con el sabor “nomil” no, porque la tarta sigue congelada.  
+Dado un conjunto de postres en la mesa, conocer el peso promedio de los postres listos. 
+Magos
+De un mago se conocen sus hechizos aprendidos y la cantidad de horrorcruxes que tiene.
+Hacer que un mago asista a la clase de defensa contra las cocinas oscuras y practique con un hechizo sobre un postre (se espera obtener el mago). Cuando un mago practica con un hechizo, lo agrega a sus hechizos aprendidos. 
+Además si el resultado de usar el hechizo en el postre es el mismo que aplicarle “avada kedavra” al postre, entonces suma un horrorcrux.
+Dado un postre y un mago obtener su mejor hechizo, que es aquel de sus hechizos que deja al postre con más cantidad de sabores luego de usarlo.
+Infinita Magia
+Construir una lista infinita de postres, y construir un mago con infinitos hechizos.
+Suponiendo que hay una mesa con infinitos postres, y pregunto si algún hechizo los deja listos ¿Existe alguna consulta que pueda hacer para que me sepa dar una respuesta? Justificar conceptualmente.
+Suponiendo que un mago tiene infinitos hechizos ¿Existe algún caso en el que se puede encontrar al mejor hechizo? Justificar conceptualmente.
